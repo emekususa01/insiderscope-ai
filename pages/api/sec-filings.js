@@ -2,6 +2,15 @@
 import axios from 'axios';
 import xml2js from 'xml2js';
 
+const symbolMap = {
+  "Tesla Inc": "TSLA",
+  "Apple Inc": "AAPL",
+  "Microsoft Corporation": "MSFT",
+  "Nvidia Corporation": "NVDA",
+  "Meta Platforms Inc": "META",
+  "Amazon.com Inc": "AMZN"
+};
+
 export default async function handler(req, res) {
   try {
     const feedUrl = 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=4&owner=only&count=100&output=atom';
@@ -28,9 +37,12 @@ export default async function handler(req, res) {
       const company = match ? match[1].trim() : 'Unknown';
       const insider = match ? match[3].trim() : 'Unknown';
 
+      const symbol = symbolMap[company] || '';
+
       return {
         company,
         insider,
+        symbol,
         transaction_type: 'unspecified',
         amount: 0,
         role: 'Unknown',
